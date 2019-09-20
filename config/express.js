@@ -6,6 +6,7 @@ var expressValidator = require('express-validator');
 module.exports = function() {
     var app = express();
 
+    app.use(express.static('./app/public'));
     app.set('view engine', 'ejs');
     app.set('views', './app/views');
 
@@ -13,11 +14,28 @@ module.exports = function() {
     app.use(bodyParser.json());
     app.use(expressValidator());
 
+    
     load('routes', {
         cwd: 'app'
     })
-        .then('database')
-        .into(app);
+    .then('database')
+    .into(app);
+    
+    app.use(function(req,res,next) {
+        if (process.env.NODE_ENV == 'production') {
+            res.status(404).render('erros/404');
+            return;
+        }
+        next();
+    });
+
+    app.use(function(error,req,res,next) {
+        if (process.env.NODE_ENV == 'production'){
+            res.status(500).render('erros/500');
+            return;
+        }
+        next();
+    });
 
     return app;
 }

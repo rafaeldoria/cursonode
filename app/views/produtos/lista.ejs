@@ -28,3 +28,11 @@
     </table>
 </body>
 </html>
+
+<scriptv src="socket.io/socket.io.js"></script>
+<script>
+    var socket = io();
+    socket.on('novaPromocao',function(data){
+        alert("Livro em promocao "+data.livro.titulo);
+    });
+</script>
